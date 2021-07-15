@@ -1,0 +1,92 @@
+template <typename T>
+T
+Loans<T>::minimumMonthlyPayment()
+{
+	return std::accumulate<Loans<T>::iterator, T, Loans<T>::accumulator>
+		(loans.begin(), loans.end(), 0.0df, _minimumMonthlyPaymentAccumulator);
+}
+
+template <typename T>
+T
+Loans<T>::principal()
+{
+	return std::accumulate<Loans<T>::iterator, T, Loans<T>::accumulator>
+		(loans.begin(), loans.end(), 0.0df, _principalAccumulator);
+}
+
+template <typename T>
+T
+Loans<T>::monthlyInterest()
+{
+	return std::accumulate<Loans<T>::iterator, T, Loans<T>::accumulator>
+		(loans.begin(), loans.end(), 0.0df, _monthlyInterestAccumulator);
+}
+
+template <typename T>
+Loan<T>&
+Loans<T>::mostCostlyLoan()
+{
+	auto iterator = 
+		std::max_element(
+			loans.begin(), loans.end(), 
+			[] (const Loan<T>& loanA, const Loan<T>& loanB) -> bool
+			{
+				return loanA.monthlyInterest() < loanB.monthlyInterest();
+			}
+		); 
+
+	return *iterator;
+}
+
+template <typename T>
+T
+Loans<T>::pay(T amount)
+{
+        if ( amount < minimumMonthlyPayment() )
+	{
+		fprintf(stderr,
+			"Tried to pay %.60He to a %.60He monthly payment!\n", 
+                    	amount, minimumMonthlyPayment());
+
+		abort();
+	}
+
+        T 
+		leftover {amount},
+		overpaid {};
+
+        for ( auto& loan : loans )
+	{
+		if ( leftover < loan.minimumMonthlyPayment )
+		{
+			fprintf(stderr,
+				"Only had %.60He to pay to a %.60He monthly payment!\n", 
+        	                leftover, loan.minimumMonthlyPayment);
+
+			abort();
+		}
+
+            overpaid = loan.pay(loan.minimumMonthlyPayment);
+            leftover -= ( loan.minimumMonthlyPayment - overpaid );
+	}
+
+        while ( leftover > 0 and Loans<T>::principal() > 0 )
+	{
+            leftover = mostCostlyLoan().payPrincipal(leftover);
+	}
+
+	return 0.0df;
+}
+
+template <typename T>
+void
+Loans<T>::printSummary()
+{
+	printf("Here is a summary: \n");
+        // print(json.dumps(
+        //     {
+        //         'totalPrincipal': self.totalPrincipal(),
+        //         'minimumMonthlyPayment': self.minimumMonthlyPayment(),
+        //         'loans': [dataclasses.asdict(loan) for loan in self.loans]
+        //     }))
+}
