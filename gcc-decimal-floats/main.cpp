@@ -87,8 +87,12 @@ int main(int argc, char *argv[])
 	std::decimal::decimal32 dfpTest {0.1df};
 	float test {0.1f};
 
-	printf("Here is a test: %.100He\n", dfpTest);
-	printf("Here is a test: %.100f\n", test);
+	printf("0.1 as a binary float: %a\n", test);
+	printf("0.1 as a decimal float: %Ha\n", 0.1df);
+	printf("Example calculation with decimal32:  %Ha\n", 4417.19df * .0429df * 0.0833333df);
+	printf("Example calculation with decimal64:  %Da\n", 4417.19dd * .0429dd * 0.0833333dd);
+	printf("Example calculation with decimal128: %DDa\n", 4417.19dl * .0429dl * 0.0833333dl);
+	printf("Interest split over days: %DDa\n", 0.0641dl / 365.0dl);
 
 	Loans<std::decimal::decimal32> loans {{
 		{"1-01", 8451.df, .0641df, 215.31df},
