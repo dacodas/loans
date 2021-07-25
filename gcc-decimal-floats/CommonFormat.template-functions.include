@@ -1,0 +1,77 @@
+namespace fmt
+{
+struct IgnoreFmtArguments
+{
+	constexpr auto parse(format_parse_context& ctx) -> decltype(ctx.begin())
+	{
+		auto iterator { ctx.begin() }, end { ctx.end() };
+
+		while (iterator != end and *iterator != '}')
+		{
+			++iterator;
+		}
+
+		return iterator;
+	}
+};
+}
+
+template<>
+struct fmt::formatter<std::decimal::decimal32> : fmt::IgnoreFmtArguments
+{
+	template<typename FormatContext>
+	auto format(const std::decimal::decimal32& H, FormatContext& ctx)
+		-> decltype(ctx.out())
+	{
+		// How am I supposed to properly write to ctx.out()?
+		//
+		// I need to use the printf specifiers from libdfp. This is my
+		// attempt.
+
+		constexpr size_t formatMaxSize { 128 };
+
+		char buffer[formatMaxSize];
+		const auto& outputIterator { ctx.out() };
+
+		int sizeToWrite = snprintf(buffer, formatMaxSize, "%.100Ha", H);
+
+		if (sizeToWrite >= formatMaxSize)
+			abort();
+
+		return format_to(ctx.out(), "{}", buffer);
+	}
+};
+
+// Override the default format for printing vector.
+// Perhaps we can do this more nicely with arguments
+template<typename T>
+struct fmt::formatter<std::vector<T>> : fmt::IgnoreFmtArguments
+{
+	template<typename FormatContext>
+	auto format(const std::vector<T>& vector, FormatContext& ctx)
+		-> decltype(ctx.out())
+	{
+
+		if (vector.size() == 0)
+		{
+			return format_to(ctx.out(), "[]");
+		}
+
+		if (vector.size() == 1)
+		{
+			return format_to(ctx.out(), "[{}]", vector[0]);
+		}
+
+		auto penultimate { --vector.end() },
+			iterator { vector.begin() };
+
+		auto outputIterator { ctx.out() };
+
+		format_to(outputIterator, "[");
+
+		while (iterator != penultimate)
+			format_to(outputIterator, "{}, ", *iterator++);
+
+		return format_to(outputIterator, "{}]", *penultimate);
+	}
+};

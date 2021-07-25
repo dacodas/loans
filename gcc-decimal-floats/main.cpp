@@ -10,6 +10,8 @@
 #include <numeric>
 #include <vector>
 
+#include <fmt/core.h>
+
 template<typename T>
 class Loan
 {
@@ -52,6 +54,8 @@ class Loans
 	using const_iterator = std::vector<Loan<T>>::const_iterator;
 	using accumulator = T (*)(T, const Loan<T>&);
 
+	friend struct fmt::formatter<Loans<T>>;
+
 	Loans<T>(std::vector<Loan<T>> loans)
 	  : loans { std::move(loans) } {};
 
@@ -68,6 +72,7 @@ class Loans
 	}
 };
 
+#include <CommonFormat.template-functions.include>
 #include <Loan.template-functions.include>
 #include <Loans.template-functions.include>
 
@@ -88,7 +93,8 @@ runThrough(Loans<T> loans, T (*func)(Loans<T>))
 		loans.printSummary();
 	}
 
-	printf("%.100He\n", interest);
+	fmt::print(R"interest({{"totalInterestPaid": {}}})interest", interest);
+	fmt::print("\n");
 
 	return interest;
 }

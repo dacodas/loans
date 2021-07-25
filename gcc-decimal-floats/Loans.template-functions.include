@@ -107,11 +107,21 @@ template<typename T>
 void
 Loans<T>::printSummary()
 {
-	printf("Here is a summary: \n");
-	// print(json.dumps(
-	//     {
-	//         'totalPrincipal': self.totalPrincipal(),
-	//         'minimumMonthlyPayment': self.minimumMonthlyPayment(),
-	//         'loans': [dataclasses.asdict(loan) for loan in self.loans]
-	//     }))
+	fmt::print("{}\n", *this);
 }
+
+template<typename T>
+struct fmt::formatter<Loans<T>> : fmt::IgnoreFmtArguments
+{
+	template<typename FormatContext>
+	auto format(const Loans<T>& loans, FormatContext& ctx)
+		-> decltype(ctx.out())
+	{
+		return format_to(
+			ctx.out(),
+			R"loan({{"totalPrincipal": "{}", "minimumMonthlyPayment": {}, "loans": {}}})loan",
+			loans.principal(),
+			loans.minimumMonthlyPayment(),
+			loans.loans);
+	}
+};

@@ -41,3 +41,20 @@ Loan<T>::payPrincipal(T amount)
 		return 0;
 	}
 }
+
+template<typename T>
+struct fmt::formatter<Loan<T>> : fmt::IgnoreFmtArguments
+{
+	template<typename FormatContext>
+	auto format(const Loan<T>& loan, FormatContext& ctx)
+		-> decltype(ctx.out())
+	{
+		return format_to(
+			ctx.out(),
+			R"loan({{"identifier": "{}", "principal": {}, "interest": {}, "minimumMonthlyPayment": {}}})loan",
+			loan.identifier,
+			loan.principal,
+			loan.interest,
+			loan.minimumMonthlyPayment);
+	}
+};
