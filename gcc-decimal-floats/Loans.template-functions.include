@@ -1,28 +1,50 @@
 template<typename T>
 T
-Loans<T>::minimumMonthlyPayment()
+Loans<T>::minimumMonthlyPayment() const
 {
-	return std::accumulate<Loans<T>::iterator, T, Loans<T>::accumulator>(
-		loans.begin(),
-		loans.end(),
-		0.0df,
-		_minimumMonthlyPaymentAccumulator);
+	return std::
+		accumulate<Loans<T>::const_iterator, T, Loans<T>::accumulator>(
+			loans.cbegin(),
+			loans.cend(),
+			0.0df,
+			_minimumMonthlyPaymentAccumulator);
 }
 
 template<typename T>
 T
-Loans<T>::principal()
+Loans<T>::principal() const
 {
-	return std::accumulate<Loans<T>::iterator, T, Loans<T>::accumulator>(
-		loans.begin(), loans.end(), 0.0df, _principalAccumulator);
+	return std::accumulate<Loans<T>::const_iterator,
+			       T,
+			       Loans<T>::accumulator>(
+		loans.cbegin(), loans.cend(), 0.0df, _principalAccumulator);
 }
 
 template<typename T>
 T
-Loans<T>::monthlyInterest()
+Loans<T>::monthlyInterest() const
 {
-	return std::accumulate<Loans<T>::iterator, T, Loans<T>::accumulator>(
-		loans.begin(), loans.end(), 0.0df, _monthlyInterestAccumulator);
+	return std::
+		accumulate<Loans<T>::const_iterator, T, Loans<T>::accumulator>(
+			loans.cbegin(),
+			loans.cend(),
+			0.0df,
+			_monthlyInterestAccumulator);
+}
+
+template<typename T>
+const Loan<T>&
+Loans<T>::mostCostlyLoan() const
+{
+	const auto iterator = std::max_element(
+		loans.cbegin(),
+		loans.cend(),
+		[](const Loan<T>& loanA, const Loan<T>& loanB) -> bool {
+			return loanA.monthlyInterest() <
+			       loanB.monthlyInterest();
+		});
+
+	return *iterator;
 }
 
 template<typename T>

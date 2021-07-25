@@ -49,17 +49,23 @@ class Loans
 
       public:
 	using iterator = std::vector<Loan<T>>::iterator;
+	using const_iterator = std::vector<Loan<T>>::const_iterator;
 	using accumulator = T (*)(T, const Loan<T>&);
 
 	Loans<T>(std::vector<Loan<T>> loans)
 	  : loans { std::move(loans) } {};
 
-	T minimumMonthlyPayment();
-	T principal();
-	T monthlyInterest();
+	T minimumMonthlyPayment() const;
+	T principal() const;
+	T monthlyInterest() const;
+	const Loan<T>& mostCostlyLoan() const;
 	Loan<T>& mostCostlyLoan();
 	T pay(T amount);
 	void printSummary();
+	const Loan<T>& operator[](std::size_t index) const
+	{
+		return loans[index];
+	}
 };
 
 #include <Loan.template-functions.include>
