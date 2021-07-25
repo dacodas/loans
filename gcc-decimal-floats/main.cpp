@@ -85,8 +85,6 @@ runThrough(Loans<T> loans, T (*func)(Loans<T>))
 	while (loans.principal() > 0)
 	{
 		interest += loans.monthlyInterest();
-		T mmp { loans.minimumMonthlyPayment() };
-
 		T payment { func(loans) };
 		loans.pay(payment);
 
