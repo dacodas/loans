@@ -90,20 +90,10 @@ runThrough(Loans<T> loans, T (*func)(Loans<T>))
 int
 main(int argc, char* argv[])
 {
-	std::decimal::decimal32 dfpTest { 0.1df };
-	float test { 0.1f };
+	using decimal32 = std::decimal::decimal32;
+	using Loans32 = Loans<decimal32>;
 
-	printf("0.1 as a binary float: %a\n", test);
-	printf("0.1 as a decimal float: %Ha\n", 0.1df);
-	printf("Example calculation with decimal32:  %Ha\n",
-	       4417.19df * .0429df * 0.0833333df);
-	printf("Example calculation with decimal64:  %Da\n",
-	       4417.19dd * .0429dd * 0.0833333dd);
-	printf("Example calculation with decimal128: %DDa\n",
-	       4417.19dl * .0429dl * 0.0833333dl);
-	printf("Interest split over days: %DDa\n", 0.0641dl / 365.0dl);
-
-	Loans<std::decimal::decimal32> loans { {
+	Loans<decimal32> loans { {
 		{ "1-01", 8451.df, .0641df, 215.31df },
 		{ "1-05", 13590.df, .0721df, 289.35df },
 		{ "1-09", 15067.df, .0684df, 314.02df },
@@ -118,27 +108,11 @@ main(int argc, char* argv[])
 		{ "AH", 1808.37df, .0376df, 21.17df },
 	} };
 
-	runThrough<std::decimal::decimal32>(
-		loans,
-		[](Loans<std::decimal::decimal32> loans)
-			-> std::decimal::decimal32 { return 1500.0df; });
+	runThrough<decimal32>(
+		loans, [](Loans32 loans) -> decimal32 { return 1500.0df; });
 
-	// startingMonth = datetime.datetime(month = 7, day = 1, year = 2021)
-	// oneMonth = datetime.timedelta(days = 32)
-	//
-	// loans = Loans([Loan(*loanArguments) for loanArguments in
-	// loanArguments]) runThrough(loans, lambda loans: 1500)
-	//
-	// loans = Loans([Loan(*loanArguments) for loanArguments in
-	// loanArguments]) runThrough(loans, lambda loans:
-	// loans.minimumMonthlyPayment())
-	//
-	// loans = Loans([Loan(*loanArguments) for loanArguments in
-	// loanArguments]) # runThrough(loans, lambda loans: max(1000,
-	// loans.minimumMonthlyPayment()))
-	//
-	// loans = Loans([Loan(*loanArguments) for loanArguments in
-	// loanArguments]) # runThrough(loans, lambda loans: 1000)
+	runThrough<decimal32>(
+		loans, [](Loans32 loans) -> decimal32 { return 2000.0df; });
 
 	return 0;
 }
