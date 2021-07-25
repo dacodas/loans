@@ -1,41 +1,43 @@
-template<> 
+template<>
 std::decimal::decimal32
 Loan<std::decimal::decimal32>::monthlyInterest() const
 {
-	const std::decimal::decimal32 oneMonthsWorth {.08333333df};
-        return principal * interest * oneMonthsWorth;
+	const std::decimal::decimal32 oneMonthsWorth { .08333333df };
+	return principal * interest * oneMonthsWorth;
 }
 
-template<> 
+template<>
 std::decimal::decimal32
 Loan<std::decimal::decimal32>::pay(std::decimal::decimal32 amount)
 {
-        if ( amount < minimumMonthlyPayment )
+	if (amount < minimumMonthlyPayment)
 	{
-		fprintf(stderr, "Tried to pay %.60He to a %.60He monthly payment!\n", 
-			amount, this->minimumMonthlyPayment);
+		fprintf(stderr,
+			"Tried to pay %.60He to a %.60He monthly payment!\n",
+			amount,
+			this->minimumMonthlyPayment);
 		abort();
 	}
 
-        std::decimal::decimal32 leftover {amount - this->monthlyInterest()};
+	std::decimal::decimal32 leftover { amount - this->monthlyInterest() };
 
-        return this->payPrincipal(leftover);
+	return this->payPrincipal(leftover);
 }
 
 template<typename T>
 T
 Loan<T>::payPrincipal(T amount)
 {
-        if ( amount > this->principal )
+	if (amount > this->principal)
 	{
-            amount -= this->principal;
-            this->principal = 0;
-            this->minimumMonthlyPayment = 0;
-            return amount;
+		amount -= this->principal;
+		this->principal = 0;
+		this->minimumMonthlyPayment = 0;
+		return amount;
 	}
-        else
+	else
 	{
-            this->principal -= amount;
-            return 0;
+		this->principal -= amount;
+		return 0;
 	}
 }
