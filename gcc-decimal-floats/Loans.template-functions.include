@@ -69,7 +69,7 @@ Loans<T>::pay(T amount)
 	if (amount < minimumMonthlyPayment())
 	{
 		fprintf(stderr,
-			"Tried to pay %.60He to a %.60He monthly payment!\n",
+			"Tried to pay %.60Ha to a %.60Ha monthly payment!\n",
 			amount,
 			minimumMonthlyPayment());
 
@@ -83,7 +83,7 @@ Loans<T>::pay(T amount)
 		if (leftover < loan.minimumMonthlyPayment)
 		{
 			fprintf(stderr,
-				"Only had %.60He to pay to a %.60He monthly "
+				"Only had %.60Ha to pay to a %.60Ha monthly "
 				"payment!\n",
 				leftover,
 				loan.minimumMonthlyPayment);
